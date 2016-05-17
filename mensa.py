@@ -4,7 +4,7 @@ from lxml import html
 import string
 
 def food(type, date):
-	#return('Salat')
+
 	if date == 'today':
 		page = requests.get('http://www.studentenwerk-berlin.de/mensen/speiseplan/tu/index.html')
 	elif date == 'tomorrow':
@@ -19,24 +19,42 @@ def food(type, date):
 		name = tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]/text()')
 		if name == []:
 			break
-		food = {'Name': None, 'Type': type, 'Price': None, 'Ampel': None}
 
-		price = tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_preis"]/text()')
-		food['Price'] = string.rstrip(price[0], None)
+		#init food dict
+		food = {'Name': None, 'Type': type, 'Price': None, 'Ampel': None, 'Veg': None, 'Bio': None, 'Klimaessen': None}
 
-		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//a[@href="#ampel_rot"]') != []:
-			ampel = 'rot'
-		elif tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//a[@href="#ampel_orange"]') != []:
-			ampel = 'orange'
-
-		elif tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//a[@href="#ampel_gruen"]') != []:
-			ampel = 'gruen'
-		food['Ampel'] = ampel
-
+		#get name
 		if name[1] == '        ':
 			food['Name'] = string.rstrip(name[2], None)
 		else:
 			food['Name'] = string.strip(name[1], None)
+
+
+		price = tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_preis"]/text()')
+		food['Price'] = string.rstrip(price[0], None)
+
+		#get Ampel
+		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//a[@href="#ampel_rot"]') != []:
+			food['Ampel'] = 'rot'
+		elif tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//a[@href="#ampel_orange"]') != []:
+			food['Ampel'] = 'orange'
+		elif tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//a[@href="#ampel_gruen"]') != []:
+			food['Ampel'] = 'gruen'
+
+		#Vegetarian/Vegan option
+		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Vegan"]') != []:
+			food['Veg'] = 'vegan'
+		elif tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Vegetarisch"]') != []:
+			food['Veg'] = 'vegetarisch'
+
+		#Bio option
+		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Bio"]') != []:
+			food['Bio'] = 'Bio'
+
+		#Klimaessen
+		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Klimaessen"]') != []:
+			food['Klimaessen'] = 'Klimaessen'
+
 		typearr.append(food)
 		counter += 1	
 
@@ -44,14 +62,8 @@ def food(type, date):
 
 
 #HP
-print(food('food', 'today'))
-#food2 = ''
-#i = 0
-#for n, val in enumerate(today):
-#    food2 += today[n]['Name'] + today[n]['Price'] + '\n'
-#    i += 1
-#print(food2)
-#usage: food('type', 'date'), prints all dishes and prices
+#print(food('food', 'today'))
 
+#usage: food('type', 'date'), all dishes and prices in an array of dicts
 #print(food('food', 'today')) #options: starters, salads, soups, special, food, side_dishes, desserts
 
