@@ -11,11 +11,10 @@ def prtFood(today, type):
     food = '*' + type + ':*\n'
     for n, val in enumerate(today):
         food += today[n]['Name'] + ':\n' + '    _' + today[n]['Price'] + '_\n'
-    #bot.sendChatAction(update.message.chat_id, action=telegram.ChatAction.TYPING)
     return food    
 
 def start(bot, update):
-    bot.sendMessage(update.message.chat_id, text='Hi!')
+    bot.sendMessage(update.message.chat_id, text='Hi! You can use this bot to check the menue of the TU Mensa (Hardenbergstrasse).\n/food\n/starters\n/soups\n/salads\n/side_dishes\n/special\n/desserts')
 
 def food(bot, update):
     food = prtFood(mensa.food('food', 'today'), 'Hauptgerichte')
@@ -54,9 +53,6 @@ def all(bot, update):
 	special(bot, update)
 	desserts(bot, update)
 
-def test(bot, update):
-	bot.sendMessage(update.message.chat_id, text="```\nI'm sorry Dave I'm afraid I can't do that\n```", parse_mode = telegram.ParseMode.MARKDOWN)
-
 updater = Updater(token)
 dp = updater.dispatcher
 dp.addHandler(MessageHandler([Filters.text], all))
@@ -69,7 +65,6 @@ dp.addHandler(CommandHandler("side_dishes", side_dishes))
 dp.addHandler(CommandHandler("desserts", desserts))
 dp.addHandler(CommandHandler("special", special))
 dp.addHandler(CommandHandler("all", all))
-dp.addHandler(CommandHandler("test", test))
 
 updater.start_polling()
 updater.idle()
