@@ -1,6 +1,7 @@
 import requests
 import json
 from lxml import html
+import string
 
 def food(type, date):
 	#return('Salat')
@@ -21,7 +22,7 @@ def food(type, date):
 		food = {'Name': None, 'Type': type, 'Price': None, 'Ampel': None}
 
 		price = tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_preis"]/text()')
-		food['Price'] = price[0]
+		food['Price'] = string.rstrip(price[0], None)
 
 		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//a[@href="#ampel_rot"]') != []:
 			ampel = 'rot'
@@ -33,9 +34,9 @@ def food(type, date):
 		food['Ampel'] = ampel
 
 		if name[1] == '        ':
-			food['Name'] = name[2]
+			food['Name'] = string.rstrip(name[2], None)
 		else:
-			food['Name'] = name[1]
+			food['Name'] = string.strip(name[1], None)
 		typearr.append(food)
 		counter += 1	
 
@@ -43,7 +44,7 @@ def food(type, date):
 
 
 #HP
-#today = food('food', 'today')
+print(food('food', 'today'))
 #food2 = ''
 #i = 0
 #for n, val in enumerate(today):
