@@ -3,14 +3,8 @@ import json
 from lxml import html
 import string
 
-def food(type, date):
+def food(type, page):
 
-	if date == 'today':
-		page = requests.get('http://www.studentenwerk-berlin.de/mensen/speiseplan/tu/index.html')
-	elif date == 'tomorrow':
-		page = requests.get('http://www.studentenwerk-berlin.de/mensen/speiseplan/tu/01.html')
-	elif date == 'day after tomorrow':
-		page = requests.get('http://www.studentenwerk-berlin.de/mensen/speiseplan/tu/02.html')
 	tree = html.fromstring(page.content)	
 	counter = 1
 	typearr = []
@@ -49,21 +43,32 @@ def food(type, date):
 
 		#Bio option
 		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Bio"]') != []:
-			food['Bio'] = 'Bio'
+			food['Bio'] = True
 
 		#Klimaessen
 		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Klimaessen"]') != []:
-			food['Klimaessen'] = 'Klimaessen'
+			food['Klimaessen'] = True
 
 		typearr.append(food)
 		counter += 1	
 
 	return typearr
 
+def today(type):
+	page = requests.get('http://www.studentenwerk-berlin.de/mensen/speiseplan/tu/index.html')
+	return(food(type, page))
+
+def tomorrow(type):
+	page = requests.get('http://www.studentenwerk-berlin.de/mensen/speiseplan/tu/01.html')
+	return(food(type, page))
+
+def dayAfterT(type):
+	page = requests.get('http://www.studentenwerk-berlin.de/mensen/speiseplan/tu/02.html')
+	return(food(type, page))
 
 #HP
-#print(food('food', 'today'))
+#print(today('food'))
 
-#usage: food('type', 'date'), all dishes and prices in an array of dicts
-#print(food('food', 'today')) #options: starters, salads, soups, special, food, side_dishes, desserts
+#returns all dishes and prices in an array of dicts
+#usage: today('type') #options: starters, salads, soups, special, food, side_dishes, desserts
 
