@@ -4,7 +4,6 @@ from time import sleep
 import mensa
 
 token = open('token').read()
-
 bot = telegram.Bot(token = token)
 
 def prtFood(today, type):
@@ -55,16 +54,16 @@ def all(bot, update):
 
 updater = Updater(token)
 dp = updater.dispatcher
-dp.addHandler(MessageHandler([Filters.text], all))
-dp.addHandler(CommandHandler("start", start))
-dp.addHandler(CommandHandler("food", food))
-dp.addHandler(CommandHandler("starters", starters))
-dp.addHandler(CommandHandler("soups", soups))
-dp.addHandler(CommandHandler("salads", salads))
-dp.addHandler(CommandHandler("side_dishes", side_dishes))
-dp.addHandler(CommandHandler("desserts", desserts))
-dp.addHandler(CommandHandler("special", special))
-dp.addHandler(CommandHandler("all", all))
+dp.add_handler(MessageHandler([Filters.text], all))
+dp.add_handler(CommandHandler("start", start))
+dp.add_handler(CommandHandler("food", food))
+dp.add_handler(CommandHandler("starters", starters))
+dp.add_handler(CommandHandler("soups", soups))
+dp.add_handler(CommandHandler("salads", salads))
+dp.add_handler(CommandHandler("side_dishes", side_dishes))
+dp.add_handler(CommandHandler("desserts", desserts))
+dp.add_handler(CommandHandler("special", special))
+dp.add_handler(CommandHandler("all", all))
 
 updater.start_polling()
 updater.idle()

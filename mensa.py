@@ -62,7 +62,7 @@ def dayAfterT(type):
 	return(food(type, page))
 
 #HP
-print(today('food'))
+#print(today('food'))
 
 #returns all dishes and prices in an array of dicts
 #usage: today('type') #options: starters, salads, soups, special, food, side_dishes, desserts
