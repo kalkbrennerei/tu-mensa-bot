@@ -15,34 +15,6 @@ def prtFood(today, type):
 def start(bot, update):
     bot.sendMessage(update.message.chat_id, text='Hi! You can use this bot to check the menue of the TU Mensa (Hardenbergstrasse).\n/food\n/starters\n/soups\n/salads\n/side_dishes\n/special\n/desserts')
 
-def food(bot, update):
-    food = prtFood(mensa.today('food'), 'Hauptgerichte')
-    bot.sendMessage(update.message.chat_id, text=food, parse_mode = telegram.ParseMode.MARKDOWN)
-
-def starters(bot, update):
-    starters = prtFood(mensa.today('starters'), 'Vorspeisen')
-    bot.sendMessage(update.message.chat_id, text=starters, parse_mode = telegram.ParseMode.MARKDOWN)
-
-def salads(bot, update):
-    salads = prtFood(mensa.today('salads'), 'Salate')
-    bot.sendMessage(update.message.chat_id, text=salads, parse_mode = telegram.ParseMode.MARKDOWN)
-
-def soups(bot, update):
-    soups = prtFood(mensa.today('soups'), 'Suppen')
-    bot.sendMessage(update.message.chat_id, text=soups, parse_mode = telegram.ParseMode.MARKDOWN)
-
-def side_dishes(bot, update):
-    side_dishes = prtFood(mensa.today('side_dishes'), 'Beilagen')
-    bot.sendMessage(update.message.chat_id, text=side_dishes, parse_mode = telegram.ParseMode.MARKDOWN)
-
-def special(bot, update):
-    special = prtFood(mensa.today('special'), 'Aktionsstand')
-    bot.sendMessage(update.message.chat_id, text=special, parse_mode = telegram.ParseMode.MARKDOWN)
-
-def desserts(bot, update):
-    desserts = prtFood(mensa.today('desserts'), 'Desserts')
-    bot.sendMessage(update.message.chat_id, text=desserts, parse_mode = telegram.ParseMode.MARKDOWN)
-
 def all(bot, update):
 	food(bot, update)
 	starters(bot, update)
@@ -52,17 +24,20 @@ def all(bot, update):
 	special(bot, update)
 	desserts(bot, update)
 
+def functionify(type, name):
+	return lambda bot, update: bot.sendMessage(update.message.chat_id, text=prtFood(mensa.today(type), name), parse_mode = telegram.ParseMode.MARKDOWN)
+
 updater = Updater(token)
 dp = updater.dispatcher
 dp.add_handler(MessageHandler([Filters.text], all))
 dp.add_handler(CommandHandler("start", start))
-dp.add_handler(CommandHandler("food", food))
-dp.add_handler(CommandHandler("starters", starters))
-dp.add_handler(CommandHandler("soups", soups))
-dp.add_handler(CommandHandler("salads", salads))
-dp.add_handler(CommandHandler("side_dishes", side_dishes))
-dp.add_handler(CommandHandler("desserts", desserts))
-dp.add_handler(CommandHandler("special", special))
+dp.add_handler(CommandHandler("food", functionify('food', 'Hauptgerichte')))
+dp.add_handler(CommandHandler("starters", functionify('starters', 'Vorspeisen')))
+dp.add_handler(CommandHandler("soups", functionify('soups', 'Suppen')))
+dp.add_handler(CommandHandler("salads", functionify('salads', 'Salate')))
+dp.add_handler(CommandHandler("side_dishes", functionify('side_dishes', 'Beilagen')))
+dp.add_handler(CommandHandler("desserts", functionify('desserts', 'Nachspeisen')))
+dp.add_handler(CommandHandler("special", functionify('special', 'Aktionsstand')))
 dp.add_handler(CommandHandler("all", all))
 
 updater.start_polling()

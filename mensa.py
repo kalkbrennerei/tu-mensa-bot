@@ -10,7 +10,13 @@ def food(type, page):
 	typearr = []
 
 	while True:
-		name = tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]/text()')
+		path = '//div[@class="mensa_day mensa_day_speise {}"]//tr[@class="mensa_day_speise_row"][{}]//td[@class="mensa_day_speise_'
+		path = path.format(type, str(counter))
+		
+		pathyfy = lambda x, y : tree.xpath(path+x+'"]'+y)
+
+		name = pathyfy('name', '/text()')
+
 		if name == []:
 			break
 
@@ -24,24 +30,25 @@ def food(type, page):
 			food['Name'] = string.strip(name[1], None)
 
 
-		price = tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_preis"]/text()')
+		price = pathyfy('preis', '/text()')
+		
 		food['Price'] = string.rstrip(price[0], None)
 
 		#get Ampel
-		food['Ampel'] = tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//a/@href')[0]
+		food['Ampel'] = pathyfy('name', '//a/@href')[0]
 
 		#Vegetarian/Vegan option
-		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Vegan"]') != []:
+		if pathyfy('name', '//img[@alt="Vegan"]') != []:
 			food['Veg'] = 'vegan'
-		elif tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Vegetarisch"]') != []:
+		elif pathyfy('name', '//img[@alt="Vegetarisch"]') != []:
 			food['Veg'] = 'vegetarisch'
 
 		#Bio option
-		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Bio"]') != []:
+		if pathyfy('name', '//img[@alt="Bio"]') != []:
 			food['Bio'] = True
 
 		#Klimaessen
-		if tree.xpath('//div[@class="mensa_day mensa_day_speise ' + type +'"]//tr[@class="mensa_day_speise_row"][' + str(counter) + ']//td[@class="mensa_day_speise_name"]//img[@alt="Klimaessen"]') != []:
+		if pathyfy('name', '//img[@alt="Klimaessen"]') != []:
 			food['Klimaessen'] = True
 
 		typearr.append(food)
@@ -61,8 +68,9 @@ def dayAfterT(type):
 	page = requests.get('http://www.studentenwerk-berlin.de/mensen/speiseplan/tu/02.html')
 	return(food(type, page))
 
-#HP
-#print(today('food'))
+
+if __name__ == '__main__':
+	print(today('food'))
 
 #returns all dishes and prices in an array of dicts
 #usage: today('type') #options: starters, salads, soups, special, food, side_dishes, desserts
